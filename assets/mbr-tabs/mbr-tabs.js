@@ -1,39 +1,37 @@
-$.fn.outerFind = function(selector) {
-    return this.find(selector).addBack(selector);
+function updateId(i) {
+  0 !== $(i).find(".nav-tabs").length &&
+    $(i)
+      .outerFind('section[id^="tabs"]')
+      .each(function () {
+        var i = $(this).attr("id"),
+          t = $(this).find(".nav-tabs .nav-item"),
+          a = $(this).find(".tab-pane");
+        a.removeClass("active").eq(0).addClass("active"),
+          t
+            .find("a")
+            .removeClass("active")
+            .removeAttr("aria-expanded")
+            .eq(0)
+            .addClass("active"),
+          a.each(function () {
+            $(this).attr("id", i + "_tab" + $(this).index());
+          }),
+          t.each(function () {
+            $(this)
+              .find("a")
+              .attr("href", "#" + i + "_tab" + $(this).index());
+          });
+      });
+}
+$.fn.outerFind = function (i) {
+  return this.find(i).addBack(i);
 };
-function updateId(target) {
-    if ($(target).find('.nav-tabs').length !== 0) {
-        $(target).outerFind('section[id^="tabs"]').each(function() {
-            var componentID = $(this).attr('id');
-            var $tabsNavItem = $(this).find('.nav-tabs .nav-item');
-            var $tabPane = $(this).find('.tab-pane');
-
-            $tabPane.removeClass('active').eq(0).addClass('active');
-
-            $tabsNavItem.find('a').removeClass('active').removeAttr('aria-expanded')
-                .eq(0).addClass('active');
-
-            $tabPane.each(function() {
-                $(this).attr('id', componentID + '_tab' + $(this).index());
-            });
-
-            $tabsNavItem.each(function() {
-                $(this).find('a').attr('href', '#' + componentID + '_tab' + $(this).index());
-            });
-        });
-    }
-}
-
-// Mobirise Initilizaton
-var isBuilder = $('html').hasClass('is-builder');
-if (isBuilder) {
-    $(document).on('add.cards', function(e) {
-        updateId(e.target);
-    });
-} else {
-    if (typeof window.initTabsPlugin === 'undefined'){
-        window.initTabsPlugin = true;
-        console.log('init tabs by plugin');
-        updateId(document.body);
-    }
-}
+var isBuilder = $("html").hasClass("is-builder");
+isBuilder
+  ? $(document).on("add.cards", function (i) {
+      updateId(i.target);
+    })
+  : void 0 === window.initTabsPlugin &&
+    ((window.initTabsPlugin = !0),
+    console.log("init tabs by plugin"),
+    updateId(document.body));
